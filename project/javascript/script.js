@@ -1,64 +1,60 @@
-const canvas = document.getElementById("nodeCanvas");
-const ctx = canvas.getContext("2d");
-
-// Tentukan ukuran canvas
-canvas.width = 800;
-canvas.height = 600;
-
-// Data posisi node (x, y)
-const nodes = [
-  { x: 100, y: 100 },
-  { x: 200, y: 150 },
-  { x: 300, y: 200 },
-  { x: 400, y: 250 },
-  { x: 500, y: 300 },
-  { x: 600, y: 350 },
-  { x: 700, y: 400 },
-  { x: 150, y: 100 },
-  { x: 250, y: 150 },
-  { x: 350, y: 200 },
-  { x: 450, y: 250 },
-  { x: 550, y: 300 },
-  { x: 650, y: 350 },
-  { x: 750, y: 400 },
-  { x: 100, y: 500 },
-  { x: 200, y: 550 },
-  { x: 300, y: 100 },
-  { x: 400, y: 150 },
-  { x: 500, y: 200 },
-  { x: 600, y: 250 },
-  { x: 700, y: 300 },
-  { x: 150, y: 400 },
-  { x: 250, y: 450 },
-  { x: 350, y: 500 },
-  { x: 450, y: 550 },
-  { x: 550, y: 100 },
-  { x: 650, y: 150 },
-  { x: 750, y: 200 },
-  { x: 100, y: 300 },
-  { x: 200, y: 350 },
-  { x: 300, y: 400 },
-  { x: 400, y: 450 },
-  { x: 500, y: 500 },
-  { x: 600, y: 550 },
-  { x: 700, y: 100 },
-  { x: 400, y: 300 },
-  { x: 500, y: 350 }
+const positions = [
+  [650, 154], [803, 154], [962, 154], [1124, 154], [1270, 154],
+  [395, 279], [649, 279], [801, 279], [965, 279], [1127, 279],
+  [1269, 279], [1536, 279],
+  [520, 340], [1408, 340],
+  [396, 406], [522, 406], [650, 406], [798, 406], [964, 406],
+  [1130, 406], [1274, 406], [1409, 406], [1540, 406],
+  [520, 478], [1410, 478],
+  [389, 538], [648, 538], [798, 538], [966, 538], [1135, 538],
+  [1278, 538], [1536, 538],
+  [650, 665], [806, 665], [969, 665], [1138, 665], [1281, 665]
 ];
 
-// Fungsi menggambar node
-function drawNodes() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height); // Bersihkan canvas
+// Membuat 37 node dengan posisi yang sudah ditentukan
+const nodes = [];
+for (let i = 0; i < 37; i++) {
+  const node = document.createElement('div');
+  node.classList.add('node');
+  const [x, y] = positions[i];
+  node.style.left = `${x}px`;
+  node.style.top = `${y}px`;
+  node.textContent = i + 1;
+  document.body.appendChild(node);
 
-  nodes.forEach(node => {
-    ctx.beginPath();
-    ctx.arc(node.x, node.y, 10, 0, Math.PI * 2); // Buat lingkaran dengan radius 10
-    ctx.fillStyle = "#007BFF"; // Warna biru
-    ctx.fill();
-    ctx.strokeStyle = "#000"; // Warna tepi hitam
-    ctx.stroke();
-  });
+  nodes.push(node);
 }
 
-// Panggil fungsi untuk menggambar node
-drawNodes();
+// Fungsionalitas drag and drop
+let isDragging = false;
+let currentNode = null;
+let offsetX, offsetY;
+
+nodes.forEach(node => {
+  node.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      currentNode = node;
+      offsetX = e.clientX - node.offsetLeft;
+      offsetY = e.clientY - node.offsetTop;
+      node.style.zIndex = 10; // Membuat node berada di atas lainnya saat di-drag
+  });
+});
+
+document.addEventListener('mousemove', (e) => {
+  if (isDragging && currentNode) {
+      currentNode.style.left = `${e.clientX - offsetX}px`;
+      currentNode.style.top = `${e.clientY - offsetY}px`;
+  }
+});
+
+document.addEventListener('mouseup', (e) => {
+  if (isDragging && currentNode) {
+      isDragging = false;
+      currentNode.style.zIndex = ''; // Mengembalikan zIndex
+      const posX = e.clientX - offsetX;
+      const posY = e.clientY - offsetY;
+
+      // Menampilkan posisi X dan Y pada output
+      document.getElementById('output').textContent = `Posisi Node ${currentNode.textContent}: X = ${posX.toFixed(2)}, Y = ${posY.toFixed(2)}`;
+  }
+});
