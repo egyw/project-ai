@@ -10,7 +10,7 @@ body {
   background-color: #3498db;
   position: absolute;
   cursor: pointer;
-  border-radius: 10px;
+  border-radius: 50%;
   text-align: center;
   line-height: 50px;
   color: white;
